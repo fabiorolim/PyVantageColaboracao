@@ -260,6 +260,7 @@ class LoopDataParserRevB(DataParser):
         # format: HHMM, and space padded on the left.ex: "601" is 6:01 AM
         return "%02d:%02d" % divmod(time, 100)  # covert to "06:01"
 
+
 # Fabio
 class LpsDataParserRevB(DataParser):
     '''Parse data returned by the 'LOOP' command. It contains all of the
@@ -349,6 +350,12 @@ class LpsDataParserRevB(DataParser):
         del self['LF']
         del self['CR']
         del self['CRC']
+
+    def bytes_to_int(self, bytes):
+        result = 0
+        for b in bytes:
+            result = result * 256 + int(b)
+        return result
 
     # def unpack_storm_date(self):
     #     '''Given a packed storm date field, unpack and return date.'''

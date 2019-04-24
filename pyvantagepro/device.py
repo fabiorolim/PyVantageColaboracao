@@ -182,7 +182,7 @@ class VantagePro2(object):
     def get_current_data2(self):
         '''Returns the real-time data as a `Dict`.'''
         self.wake_up()
-        self.send("LOOP 2", self.ACK)
+        self.send("LPS LOOP2", self.ACK)
         current_data = self.link.read(99)
         if self.RevB:
             return LpsDataParserRevB(current_data, datetime.now())

@@ -30,11 +30,19 @@ class TestLoopDataParser():
 
     def __init__(self):
         '''Setup common data.'''
-        self.data = "4C4F4FC4006802547B52031EFF7FFFFFFF7FFFFFFFFFFFFF" \
-                    "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F0000" \
-                    "FFFF000000003C03000000000000FFFFFFFFFFFFFF000000" \
-                    "0000000000000000000000000000008C00060C610183070A" \
-                    "0D2A3C"
+        # self.data = "4C4F4FC4006802547B52031EFF7FFFFFFF7FFFFFFFFFFFFF" \
+        #             "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F0000" \
+        #             "FFFF000000003C03000000000000FFFFFFFFFFFFFF000000" \
+        #             "0000000000000000000000000000008C00060C610183070A" \
+        #             "0D2A3C"
+        # self.data = "4C4F4F14005408ED744E03474C0302041201FFFFFFFFFFFFFFFFFFFFFF" \
+        #             "FFFFFFFF4AFFFFFFFFFFFFFF0000FFB3020000FFFF00001E0775120F005C" \
+        #             "01D606FFFFFFFFFFFFFF0000000000000000000000000000000000000803" \
+        #             "062D0B00B5040A0D7CF6"
+        self.data = "4C4F4F0001FF7FEF742D0335660305FFE000400042000C003B01FF7FFF" \
+                    "7F4B00FF44FF600057006D000000FF12040000FFFF000000000000350000" \
+                    "00020000C9FF657265721775FF00100B080D100C28160202FF7FFF7FFF7F" \
+                    "FF7FFF7FFF7F0A0DDD2B"
         self.bytes = hex_to_bytes(self.data)
 
     def test_check_crc(self):
@@ -52,7 +60,13 @@ class TestLoopDataParser():
 
         # assert item['TempIn'] == 85.0
         # assert item['HeatIndex'] == 85.0
-        print(item['HeatIndex'])
+
+        print('Heat', converter_temp(int(item['HeatIndex'])))
+        print('Last', item['Last15Rain'])
+        print('Dew', converter_temp(int(item['DewPoint'])))
+        print('Wind', converter_temp(int(item['WindChill'])))
+        print('THSW', converter_temp(int(item['THSWIndex'])))
+        print(converter_temp(int(self.data[70:72])))
 
         # assert item['Alarm01HighLeafTemp'] == 0
         # assert item['Alarm01HighLeafWet'] == 0
@@ -115,9 +129,12 @@ def test_dump_date_time():
     date, time, _ = struct.unpack(b"HHH", packed)
     assert d == unpack_dmp_date_time(date, time)
 
+def converter_temp(temp_f):
+    temp_cels = (temp_f - 32) / 1.8
+    return round(temp_cels, 1)
+
 
 teste = TestLoopDataParser()
 teste.test_check_raw_data()
 teste.test_check_crc()
 teste.test_unpack()
-
