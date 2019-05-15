@@ -86,10 +86,6 @@ class TestLoopDataParser():
         # assert converter_temp(int(item['WindChill'])) == 25.0
         # assert converter_temp(int(item['THSWIndex'])) == 27.2
 
-
-
-
-
         # assert item['Alarm01HighLeafTemp'] == 0
         # assert item['Alarm01HighLeafWet'] == 0
         # assert item['Alarm01HighSoilMois'] == 0
