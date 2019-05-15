@@ -178,7 +178,7 @@ class VantagePro2(object):
         else:
             raise NotImplementedError('Do not support RevB data format')
 
-    #Add LPS command Fabio
+    # Add LPS command Fabio
     def get_current_data2(self):
         '''Returns the real-time data as a `Dict`.'''
         self.wake_up()

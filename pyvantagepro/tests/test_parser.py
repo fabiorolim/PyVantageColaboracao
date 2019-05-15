@@ -44,10 +44,18 @@ class TestLoopDataParser():
         #             "00020000C9FF657265721775FF00100B080D100C28160202FF7FFF7FFF7F" \
         #             "FF7FFF7FFF7F0A0DDD2B"
 
-        self.data = "4C4F4FEC01FF7F95745D033A860305FF3B012300180007003B01FF7FFF" \
-                    "7F4A00FF3CFF65005A0066000000FF78000000FFFF000000000000BF00" \
-                    "0000020000C9FF0E720E72BE74FF07060C0E0D090C39160202FF7FFF7FFF "\
-                    "7FFF7FFF7FFF7F0A0DCBFD"
+        # self.data = "4C4F4FEC01FF7F95745D033A860305FF3B012300180007003B01FF7FFF" \
+        #             "7F4A00FF3CFF65005A0066000000FF78000000FFFF000000000000BF00" \
+        #             "0000020000C9FF0E720E72BE74FF07060C0E0D090C39160202FF7FFF7FFF "\
+        #             "7FFF7FFF7FFF7F0A0DCBFD"
+        # self.bytes = hex_to_bytes(self.data)
+
+        # Dados coletados 15/05/19 às 18:35
+        self.data = "4C4F4F1401FF7F9674520349060300FF5E010000000000006801FF7FFF7" \
+                    "F4A00FF58FF52004D0051000000FF0000AA009357AA00000000002D00AA" \
+                    "00020000C9FF08720872B874FF021114100A040D34170202FF7FFF7FFF7" \
+                    "FFF7FFF7FFF7F0A0DCF98"
+
         self.bytes = hex_to_bytes(self.data)
 
     def test_check_crc(self):
@@ -73,6 +81,14 @@ class TestLoopDataParser():
         print('THSW', converter_temp(int(item['THSWIndex'])))
         print(converter_temp(int(self.data[70:72])))
         print(len(self.bytes))
+        # assert converter_temp(int(item['HeatIndex'])) == 27.8
+        # assert converter_temp(int(item['DewPoint'])) == 23.3
+        # assert converter_temp(int(item['WindChill'])) == 25.0
+        # assert converter_temp(int(item['THSWIndex'])) == 27.2
+
+
+
+
 
         # assert item['Alarm01HighLeafTemp'] == 0
         # assert item['Alarm01HighLeafWet'] == 0
