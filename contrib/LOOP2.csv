@@ -1,0 +1,122 @@
+Field,Offset,Size,Struct,Explanation
+LOO,0,3,3s,"Spells out ""LOO"", identifies a LOOP packet"
+Bar Trend,3,1,B,"Signed byte that indicates the current 3-hour barometer trend. It 
+is one of these values: 
+-60 = Falling Rapidly  = 196 (as an unsigned byte) 
+-20 = Falling Slowly   = 236 (as an unsigned byte) 
+  0 = Steady 
+ 20 = Rising Slowly 
+ 60 = Rising Rapidly 
+ 80 = A SCII ""P"" = Rev A  firmware, no trend info is available 
+A ny other value means that the V antage does not have the 3 
+hours of bar data needed to determine the bar trend."
+Packet Type,4,1,B,0 for LOOP and 1 for LOOP2 packet
+Unused,5,2,H,"Unused field, filled with 0x7FFF"
+Barometer,7,2,H,"Current Barometer. Units are (in Hg / 1000). The barometric 
+value should be between 20 inches and 32.5 inches.  V alues 
+outside these ranges will not be logged."
+Inside Temperature,9,2,H,"The value is sent as 10th of a degree in F.  For example, 795 is 
+returned for 79.5°F."
+Inside Humidity,11,1,B,"This is the relative humidity in %, such as 50 is returned for 50%."
+Outside Temperature,12,2,H,"The value is sent as 10th of a degree in F.  For example, 795 is 
+returned for 79.5°F."
+Wind Speed,14,1,B,"It is a byte unsigned value in mph.  If the wind speed is dashed 
+because it lost synchronization with the radio or due to some 
+other reason, the wind speed is forced to be 0."
+Unused,15,1,B,"Unused field, filled wth 0xFF"
+Wind Direction,16,2,H,"It is a two-byte unsigned value from 1 to 360 degrees.  (0° is no 
+wind data, 90° is East, 180° is South, 270° is West and 360° is 
+north)"
+10-Min Avg Wind Speed,18,2,H,It is a two-byte unsigned value in 0.1mph resolution.
+2-Min Avg Wind Speed,20,2,H,It is a two-byte unsigned value in 0.1mph resolution.
+10-Min Wind Gust,22,2,H,It is a two-byte unsigned value in 0.1mph resoluation.
+"Wind Direction for the 10-
+Min Wind Guest",24,2,H,"It is a two-byte unsigned value from 1 to 360 degrees.  (0° is no 
+wind data, 90° is East, 180° is South, 270° is West and 360° is 
+north)"
+Unused,26,2,H,"Unused field, filled with 0x7FFF"
+Unused,28,2,H,"Unused field, filled with 0x7FFF"
+Dew Point,30,2,H,"The value is a signed two byte value in whole degrees F.  
+255 = dashed data"
+Unused,32,1,B,"Unused field, filled with 0xFF"
+Outside Humidity,33,1,B,"This is the relative humidity in %, such as 50 is returned for 50%."
+Unused,34,1,B,"Unused field, filled with 0xFF"
+Heat Index,35,2,H,"The value is a signed two byte value in whole degrees F.  
+255 = dashed data"
+Wind Chill,37,2,H,"The value is a signed two byte value in whole degrees F.  
+255 = dashed data"
+THSW Index,39,2,H,"The value is a signed two byte value in whole degrees F.  
+255 = dashed data"
+Rain Rate,41,2,H,In rain clicks per hour.
+UV,43,1,B,Unit is in UV  Index
+Solar Radiation,44,2,H,The unit is in watt/meter2.
+Storm Rain,46,2,H,The storm is stored as number of rain clicks. (0.2mm or 0.01in)
+Start Date of current Storm,48,2,H,"Bit 15 to bit 12 is the month, bit 11 to bit 7 is the day and bit 6 to 
+bit 0 is the year offseted by 2000."
+Daily Rain,50,2,H,This value is sent as number of rain clicks. (0.2mm or 0.01in)
+Last 15-min Rain,52,2,H,This value is sent as number of rain clicks. (0.2mm or 0.01in)
+Last Hour Rain,54,2,H,This value is sent as number of rain clicks. (0.2mm or 0.01in)
+Daily ET,56,2,H,This value is sent as the 1000th of an inch.
+Last 24-Hour Rain,58,2,H,This value is sent as number of rain clicks. (0.2mm or 0.01in)
+"Barometric Reduction 
+Method",60,1,B,"Bar reduction method: 0 - user offset 1- A ltimeter Setting 2- 
+NOA A  Bar Reduction.  For V P2, this will always be 2."
+"User-entered Barometric 
+Offset",61,2,H,Barometer calibration number in 1000th of an inch
+"Barometric calibration 
+number",63,2,H,Calibration offset in 1000th of an inch
+"Barometric Sensor Raw 
+Reading",65,2,H,In 1000th of an inch
+"A bsolute Barometric 
+Pressure",67,2,H,"In 1000th of an inch, equals to the raw sensor reading plus user 
+entered offset"
+A ltimeter Setting,69,2,H,In 1000th of an inch
+Unused,71,1,B,"Unused field, filled with 0xFF"
+Unused,72,1,B,Undefined
+"Next 10-min Wind Speed 
+Graph Pointer",73,1,B,"Points to the next 10-minute wind speed graph point.  For current 
+graph point, just subtract 1 (range from 0 to 23 on VP/VP2 
+console and 0 to 24 on Vantage Vue console)"
+"Next 15-min Wind Speed 
+Graph Pointer",74,1,B,"Points to the next 15-minute wind speed graph point.  For current 
+graph point, just subtract 1 (range from 0 to 23 on VP/VP2 
+console and 0 to 24 on Vantage Vue console)"
+"Next Hourly Wind Speed 
+Graph Pointer",75,1,B,"Points to the next hour wind speed graph point.  For current 
+graph point, just subtract 1 (range from 0 to 23 on VP/VP2 
+console and 0 to 24 on Vantage Vue console)"
+"Next Daily Wind Speed 
+Graph Pointer",76,1,B,"Points to the next daily wind speed graph point.  For current 
+graph point, just subtract 1 (range from 0 to 23 on VP/VP2 
+console and 0 to 24 on Vantage Vue console)"
+"Next Minute Rain Graph 
+Pointer",77,1,B,"Points to the next minute rain graph point.  For current graph 
+point, just subtract 1 (range from 0 to 23 on VP/VP2 console and 
+0 to 24 on Vantage Vue console)"
+"Next Rain Storm Graph 
+Pointer",78,1,B,"Points to the next rain storm graph point.  For current graph 
+point, just subtract 1 (range from 0 to 23 on VP/VP2 console and 
+0 to 254on Vantage Vue console)"
+"Index to the Minute within 
+an Hour",79,1,B,"It keeps track of the minute within an hour for the rain 
+calculation.  (range from 0 to 59)"
+Next Monthly Rain,80,1,B,"Points to the next monthly rain graph point.  For current graph 
+point, just subtract 1 (range from 0 to 23 on VP/VP2 console and 
+0 to 24 on Vantage Vue console)"
+Next Yearly Rain,81,1,B,"Points to the next yearly rain graph point.  For current graph 
+point, just subtract 1 (range from 0 to 23 on VP/VP2 console and 
+0 to 24 on Vantage Vue console)"
+Next Seasonal Rain,82,1,B,"Points to the next seasonal rain graph point.  Yearly rain always 
+resets at the beginning of the calendar, but seasonal rain resets 
+when rain season begins.  For current graph point, just subtract 1 
+(range from 0 to 23 on VP/VP2 console and 0 to 24 on Vantage 
+Vue console)"
+Unused,83,2,H,"Unused field, filled with 0x7FFF"
+Unused,85,2,H,"Unused field, filled with 0x7FFF"
+Unused,87,2,H,"Unused field, filled with 0x7FFF"
+Unused,89,2,H,"Unused field, filled with 0x7FFF"
+Unused,91,2,H,"Unused field, filled with 0x7FFF"
+Unused,93,2,H,"Unused field, filled with 0x7FFF"
+LF,95,1,B,
+CR,96,1,B,
+CRC,97,2,H,

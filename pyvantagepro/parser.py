@@ -11,6 +11,9 @@
 
 '''
 from __future__ import division, unicode_literals
+
+import csv
+import re
 import struct
 from datetime import datetime
 from array import array
@@ -261,114 +264,39 @@ class LoopDataParserRevB(DataParser):
         return "%02d:%02d" % divmod(time, 100)  # covert to "06:01"
 
 
-# Fabio
+class Layout(object):
+    @classmethod
+    def from_csv(cls, filename, delimiter=',', quotechar='"'):
+        with open(filename) as csvfile:
+            reader = csv.reader(csvfile, delimiter=delimiter, quotechar=quotechar)
+
+            # ignore header
+            next(reader)
+
+            return tuple(((cls.fmt_field(field), fmt) for field, _, _, fmt, *_ in reader))
+
+    @staticmethod
+    def fmt_field(s):
+        """Cleanup field name respecting Python syntax restrictions."""
+        s = re.sub(r'[- "\n\r]*', '', s)
+        if s[0].isdigit():
+            s = '_' + s
+        return s
+
+
 class LpsDataParserRevB(DataParser):
-    '''Parse data returned by the 'LOOP' command. It contains all of the
-    real-time data that can be read from the Davis VantagePro2.'''
-    # Loop data format (RevB)
-    LOOP2_FORMAT = (
-        ('LOO', '3s'), ('BarTrend', 'B'), ('PacketType', 'B'),
-        ('Un1', 'H'), ('Barometer', 'H'), ('TempIn', 'H'),
-        ('HumIn', 'B'), ('TempOut', 'H'), ('WindSpeed', 'B'), ('Un2', 'B'),
-        ('WindDir', 'H'), ('WindSpeed10Min', 'H'), ('WindSpeed2Min', 'H'),
-        ('WindGust', 'H'), ('WindDir10Guest', 'H'), ('Un3', 'H'), ('Un4', 'H'),
-        ('DewPoint', 'H'), ('Un5', 'B'), ('HumOut', 'B'), ('Un6', 'B'),
-        ('HeatIndex', 'H'), ('WindChill', 'H'), ('THSWIndex', 'H'),
-        ('RainRate', 'H'), ('UV', 'B'), ('SolarRad', 'H'), ('RainStorm', 'H'),
-        ('StormStartDate', 'H'), ('RainDay', 'H'), ('Last15Rain', 'H'),
-        ('LastHourRain', 'H'), ('ETDay', 'H'), ('Last24HourRain', 'H'),
-        ('BarometricRedutionMethod', 'B'), ('UserBarometric', 'H'),
-        ('BarometricCalibration', 'H'), ('BarometricSensorRaw', 'H'),
-        ('AbsoluteBarometricPressure', 'H'),
-        ('AltimeterSettings', 'H'), ('Un7', 'B'), ('Un8', 'B'), ('NG1', 'B'),
-        ('NG2', 'B'), ('NG3', 'B'), ('NG4', 'B'), ('NG5', 'B'), ('NG6', 'B'),
-        ('NG7', 'B'), ('NG8', 'B'), ('NG9', 'B'), ('NG10', 'B'),
-        ('Un8', 'H'), ('Un9', 'H'), ('Un10', 'H'), ('Un11', 'H'), ('Un12', 'H'),
-        ('Un13', 'H'), ('LF', 'B'), ('CR', 'B'), ('CRC', 'H')
-    )
+    FORMAT = Layout.from_csv('contrib/LOOP2.csv')
 
-    def __init__(self, data, dtime):
-        super(LpsDataParserRevB, self).__init__(data, self.LOOP2_FORMAT)
-        self['HeatIndex'] = self['HeatIndex']
-        self['WindChill'] = self['WindChill']
-        self['THSWIndex'] = self['THSWIndex']
-        self['DewPoint'] = self['DewPoint']
-        self['Last15Rain'] = self['Last15Rain'] / 100
-        self['LastHourRain'] = self['LastHourRain'] / 100
-        self['Last24HourRain'] = self['Last24HourRain'] / 100
-        # self['HeatIndex'] = self['HeatIndex'] / 10
-        # self['TempIn'] = self['TempIn'] / 10
-        # delete unused values
-        del self['LOO']
-        del self['BarTrend']
-        del self['Barometer']
-        # del self['TempIn']
-        del self['HumIn']
-        del self['TempOut']
-        del self['WindSpeed']
-        del self['WindSpeed10Min']
-        del self['WindSpeed2Min']
-        del self['WindDir']
-        del self['WindGust']
-        del self['WindDir10Guest']
-        del self['UV']
-        del self['SolarRad']
-        del self['RainStorm']
-        del self['StormStartDate']
-        del self['RainDay']
-        # del self['Last15Rain']
-        # del self['LastHourRain']
-        # del self['Last24HourRain']
-        del self['ETDay']
-        del self['BarometricRedutionMethod']
-        del self['AbsoluteBarometricPressure']
-        del self['AltimeterSettings']
-        del self['Un1']
-        del self['Un2']
-        del self['Un3']
-        del self['Un4']
-        del self['Un5']
-        del self['Un6']
-        del self['Un7']
-        del self['Un8']
-        del self['Un9']
-        del self['Un10']
-        del self['Un11']
-        del self['Un12']
-        del self['NG1']
-        del self['NG2']
-        del self['NG3']
-        del self['NG4']
-        del self['NG5']
-        del self['NG6']
-        del self['NG7']
-        del self['NG8']
-        del self['NG9']
-        del self['NG10']
-        # del self['NextRec']
-        del self['PacketType']
-        del self['LF']
-        del self['CR']
-        del self['CRC']
+    def __init__(self, data):
+        super(LpsDataParserRevB, self).__init__(data, self.FORMAT)
 
-    def bytes_to_int(self, bytes):
-        result = 0
-        for b in bytes:
-            result = result * 256 + int(b)
-        return result
+        self.Last15minRain = self.Last15minRain / 100
+        self.LastHourRain = self.LastHourRain / 100
+        self.Last24HourRain = self.Last24HourRain / 100
+        self.InsideTemperature = self.InsideTemperature / 10
 
-    # def unpack_storm_date(self):
-    #     '''Given a packed storm date field, unpack and return date.'''
-    #     date = bytes_to_binary(self.raw_bytes[48:50])
-    #     year = binary_to_int(date, 0, 7) + 2000
-    #     day = binary_to_int(date, 7, 12)
-    #     month = binary_to_int(date, 12, 16)
-    #     return "%s-%s-%s" % (year, month, day)
-    #
-    # def unpack_time(self, time):
-    #     '''Given a packed time field, unpack and return "HH:MM" string.'''
-    #     # format: HHMM, and space padded on the left.ex: "601" is 6:01 AM
-    #     return "%02d:%02d" % divmod(time, 100)  # covert to "06:01"
+    def __getattr__(self, item):
+        return self[item]
 
 
 class ArchiveDataParserRevB(DataParser):
